@@ -2,6 +2,16 @@
 
 本项目由 Windows 桌面启动器和 Linux 纯 API 服务端组成。
 
+主要功能：
+
+- 游戏账号登录、注册、找回密码。
+- 公告文字与海报轮播。
+- 启动同目录下的 `DNF.exe`，支持运行状态检测与结束游戏。
+- 客户端 `Script.pvf` MD5 校验，校验不一致时可提示更新。
+- GM 功能：角色、邮件、背包、充值、活动、封禁、权限、系统配置。
+- 按键连发，仅在 `DNF.exe` 前台运行时生效。
+- 单实例运行、通知栏最小化、启动 Logo 提示窗口。
+
 技术栈：
 
 - 桌面端：Tauri 2、Rust、Vite、原生 HTML/CSS/JavaScript
@@ -80,7 +90,7 @@ pvf_data
 ```json
 {
   "server_host": "游戏数据库IP",
-  "db_user": "game",
+  "db_user": "数据库用户名",
   "db_password": "数据库密码",
   "game_db_name": "d_taiwan",
   "tool_db_name": "dnf_launcher",
@@ -97,10 +107,16 @@ pvf_data
 /opt/server/data/posters/
 ```
 
-支持 JPG、JPEG、PNG、WebP。GM 端公告海报地址填写：
+支持 JPG、JPEG、PNG、WebP。GM 端公告海报地址可以填写完整文件名：
 
 ```text
 /api/posters/example.jpg
+```
+
+如果省略扩展名，服务端会按 `.jpg`、`.jpeg`、`.png`、`.webp` 的顺序自动匹配：
+
+```text
+/api/posters/example
 ```
 
 也可以填写完整的 `http://` 或 `https://` 图片地址。建议尺寸为 1120×480。
@@ -129,7 +145,7 @@ DNF客户端/
 
 按键连发配置固定保存到 `%LOCALAPPDATA%\DNFLauncher\rapid-fire.json`，不依赖启动器所在目录写权限。当前连发实现使用 Interception 驱动层输入，仅在 `DNF.exe` 前台运行时生效。
 
-将官方 `Interception.zip` 解压后的完整 `Interception` 目录放到客户端 `start` 目录下。该目录下的驱动、安装程序和运行库文件来自 [oblitum/Interception](https://github.com/oblitum/Interception)，不属于本项目原创代码：
+将官方 `Interception.zip` 解压后的完整 `Interception` 目录放到客户端 `start` 目录下。该目录下的驱动、安装程序和运行库文件来自 [oblitum/Interception](https://github.com/oblitum/Interception)，不属于本项目原创代码；本仓库不内置这些文件：
 
 ```text
 DNF客户端/start/Interception/
@@ -143,6 +159,16 @@ DNF客户端/start/Interception/library/x64/interception.dll
 ```
 
 如果检测到安装文件但驱动未就绪，按键连发页会显示“安装驱动”按钮。点击后会请求管理员权限并启动安装程序。安装完成后需要重启电脑；驱动状态正常后不再显示安装按钮。
+
+## 仓库不包含内容
+
+本仓库只保存启动器、服务端源码、示例配置和示例图片，不包含：
+
+- `DNF.exe` 或其他游戏客户端文件。
+- Interception 官方驱动、安装程序和运行库文件。
+- 真实服务端配置 `server/config.json`。
+- 数据库数据或数据库备份。
+- 编译后的 EXE、MSI 等发布产物。
 
 ## Windows 编译环境
 
