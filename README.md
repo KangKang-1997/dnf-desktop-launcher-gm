@@ -129,7 +129,7 @@ DNF客户端/
 
 按键连发配置固定保存到 `%LOCALAPPDATA%\DNFLauncher\rapid-fire.json`，不依赖启动器所在目录写权限。当前连发实现使用 Interception 驱动层输入，仅在 `DNF.exe` 前台运行时生效。
 
-将官方 `Interception.zip` 解压后的完整 `Interception` 目录放到客户端 `start` 目录下：
+将官方 `Interception.zip` 解压后的完整 `Interception` 目录放到客户端 `start` 目录下。该目录下的驱动、安装程序和运行库文件来自 [oblitum/Interception](https://github.com/oblitum/Interception)，不属于本项目原创代码：
 
 ```text
 DNF客户端/start/Interception/
