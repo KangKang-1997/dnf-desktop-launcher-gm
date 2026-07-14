@@ -37,9 +37,14 @@ try {
         throw "Build finished but EXE was not found: $ExePath"
     }
 
+    $OutputExePath = Join-Path $ProjectRoot "dnf-desktop-launcher.exe"
+    Copy-Item -LiteralPath $ExePath -Destination $OutputExePath -Force
+
     Write-Host ""
     Write-Host "Build finished:"
     Write-Host $ExePath
+    Write-Host "Copied to:"
+    Write-Host $OutputExePath
 } finally {
     Pop-Location
 }
