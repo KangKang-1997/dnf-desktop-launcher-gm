@@ -158,7 +158,7 @@ DNF客户端/start/Interception/command line installer/install-interception.exe
 DNF客户端/start/Interception/library/x64/interception.dll
 ```
 
-如果检测到安装文件但驱动未就绪，按键连发页会显示“安装驱动”按钮。点击后会请求管理员权限并启动安装程序。安装完成后需要重启电脑；驱动状态正常后不再显示安装按钮。
+如果检测到安装文件但驱动未就绪，按键连发页会显示“安装驱动”按钮。点击后会请求管理员权限并启动安装程序。也可以不通过启动器，直接使用 Interception 官方方式自行安装驱动。安装完成后需要重启电脑；驱动状态正常后不再显示安装按钮。
 
 ## 仓库不包含内容
 
@@ -229,3 +229,4 @@ desktop_launcher/src-tauri/target/release/dnf-desktop-launcher.exe
 未设置 `DNF_LAUNCHER_API_BASE`，或者不是 `http://` / `https://` 开头时，构建会直接失败。
 
 最终发布时，将该 EXE 改名后放入客户端根目录即可。启动器会查找同目录下的 `DNF.exe`。
+
