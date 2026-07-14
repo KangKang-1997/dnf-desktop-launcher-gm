@@ -1,0 +1,939 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#080d17" />
+    <title>地下城与勇士</title>
+  </head>
+  <body class="logged-out">
+    <div class="launcher-shell">
+      <div class="background-art" aria-hidden="true"></div>
+      <div class="background-shade" aria-hidden="true"></div>
+
+      <svg class="icon-sprite" aria-hidden="true">
+        <symbol id="icon-home" viewBox="0 0 24 24">
+          <path d="m3 10.5 9-7.5 9 7.5" />
+          <path d="M5 9v12h14V9" />
+          <path d="M9 21v-6h6v6" />
+        </symbol>
+        <symbol id="icon-account" viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="9" />
+          <circle cx="12" cy="9" r="3" />
+          <path d="M6.8 18c1.15-2.2 2.9-3.3 5.2-3.3s4.05 1.1 5.2 3.3" />
+        </symbol>
+        <symbol id="icon-mail" viewBox="0 0 24 24">
+          <rect x="3" y="5" width="18" height="14" rx="2" />
+          <path d="m4 7 8 6 8-6" />
+        </symbol>
+        <symbol id="icon-recharge" viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="9" />
+          <path d="m8.5 6.5 3.5 5 3.5-5M12 11.5v6M8.7 12h6.6M8.7 15h6.6" />
+        </symbol>
+        <symbol id="icon-role" viewBox="0 0 24 24">
+          <circle cx="12" cy="7.5" r="3.5" />
+          <path d="M5.5 21v-2.2c0-4 2.2-6.3 6.5-6.3s6.5 2.3 6.5 6.3V21" />
+          <path d="M4 21h16" />
+        </symbol>
+        <symbol id="icon-backpack" viewBox="0 0 24 24">
+          <path d="M7 8V6.5A3.5 3.5 0 0 1 10.5 3h3A3.5 3.5 0 0 1 17 6.5V8" />
+          <rect x="4" y="7" width="16" height="14" rx="3" />
+          <path d="M8 12h8M8 16h8M12 12v4" />
+        </symbol>
+        <symbol id="icon-activity" viewBox="0 0 24 24">
+          <rect x="3" y="9" width="18" height="12" rx="2" />
+          <path d="M2.5 9h19V5.5h-19zM12 5.5V21" />
+          <path d="M12 5.5H8.7a2.2 2.2 0 1 1 0-4.4c2.1 0 3.3 4.4 3.3 4.4ZM12 5.5h3.3a2.2 2.2 0 1 0 0-4.4c-2.1 0-3.3 4.4-3.3 4.4Z" />
+        </symbol>
+        <symbol id="icon-fashion" viewBox="0 0 24 24">
+          <path d="m8 4-5 3 2.5 5L8 10.7V21h8V10.7l2.5 1.3L21 7l-5-3c-.7 1.3-2 2-4 2S8.7 5.3 8 4Z" />
+        </symbol>
+        <symbol id="icon-rapid-fire" viewBox="0 0 24 24">
+          <rect x="3" y="6" width="18" height="12" rx="2.5" />
+          <path d="M7 10h3M8.5 8.5v3M13 10h.01M17 10h.01M7 15h10" />
+        </symbol>
+        <symbol id="icon-ban" viewBox="0 0 24 24">
+          <path d="M12 3 5 6v5c0 4.8 2.7 8.1 7 10 4.3-1.9 7-5.2 7-10V6l-7-3Z" />
+          <path d="m8.5 8.5 7 7m0-7-7 7" />
+        </symbol>
+        <symbol id="icon-permission" viewBox="0 0 24 24">
+          <rect x="5" y="10" width="14" height="10" rx="2" />
+          <path d="M8 10V7a4 4 0 0 1 8 0v3m-4 4v2" />
+        </symbol>
+        <symbol id="icon-settings" viewBox="0 0 24 24">
+          <path d="M4 7h10m4 0h2M4 17h2m4 0h10M14 4v6M6 14v6" />
+        </symbol>
+        <symbol id="icon-auth-login" viewBox="0 0 24 24">
+          <path d="M10 5H6.5A2.5 2.5 0 0 0 4 7.5v9A2.5 2.5 0 0 0 6.5 19H10" />
+          <path d="m14 8 4 4-4 4M18 12H9" />
+        </symbol>
+        <symbol id="icon-auth-register" viewBox="0 0 24 24">
+          <circle cx="9" cy="8" r="3" />
+          <path d="M3.5 19c0-3.7 1.8-5.5 5.5-5.5 2.1 0 3.6.6 4.5 1.8" />
+          <path d="M17 9v7M13.5 12.5h7" />
+        </symbol>
+      </svg>
+
+      <header class="titlebar" data-tauri-drag-region>
+        <div class="titlebar-spacer" data-tauri-drag-region></div>
+        <button class="account-summary" id="accountSummary" type="button" aria-label="打开账号" hidden>
+          <span id="accountSummaryPrefix">账号：</span><strong id="currentAccount">-</strong>
+        </button>
+        <button
+          class="window-control"
+          type="button"
+          data-window-action="minimize"
+          aria-label="最小化"
+        >
+          <svg class="window-icon" viewBox="0 0 20 20" aria-hidden="true">
+            <path d="M4 10h12" />
+          </svg>
+        </button>
+        <button
+          class="window-control window-close"
+          type="button"
+          data-window-action="close"
+          aria-label="关闭"
+        >
+          <svg class="window-icon" viewBox="0 0 20 20" aria-hidden="true">
+            <path d="m5 5 10 10M15 5 5 15" />
+          </svg>
+        </button>
+      </header>
+
+      <main class="login-view" id="loginView">
+        <img class="login-logo" src="/assets/logo.png" alt="DNF" />
+
+        <section class="login-card" aria-label="账号登录">
+          <div class="login-emblem" aria-hidden="true">
+            <svg data-auth-icon="login"><use href="#icon-auth-login"></use></svg>
+            <svg data-auth-icon="register" hidden><use href="#icon-auth-register"></use></svg>
+          </div>
+          <h1 id="authTitle">登录游戏账号</h1>
+
+          <div class="auth-tabs" role="tablist" aria-label="账号入口">
+            <button class="auth-tab active" type="button" data-auth-tab="login">登录</button>
+            <button class="auth-tab" type="button" data-auth-tab="register">注册</button>
+          </div>
+
+          <form class="auth-form" id="loginForm" autocomplete="off">
+            <label class="field">
+              <span>账号</span>
+              <input
+                id="loginAccount"
+                autocomplete="off"
+                placeholder="请输入游戏账号"
+                required
+              />
+            </label>
+            <label class="field">
+              <span>密码</span>
+              <input
+                id="loginPassword"
+                type="password"
+                autocomplete="off"
+                placeholder="请输入密码"
+                required
+              />
+            </label>
+            <div class="login-options">
+              <label><input id="rememberPassword" type="checkbox" /> <span>记住密码</span></label>
+              <button class="forgot-password" id="forgotPassword" type="button">忘记密码</button>
+            </div>
+            <p class="auth-status" id="authStatus" role="status" aria-live="polite"></p>
+            <button class="primary-button" id="loginSubmit" type="submit">登录</button>
+          </form>
+
+          <form class="auth-form" id="registerForm" autocomplete="off" hidden>
+            <label class="field">
+              <span>账号</span>
+              <input id="registerAccount" inputmode="numeric" autocomplete="off" minlength="4" maxlength="16" placeholder="4-16 位数字账号" required />
+            </label>
+            <label class="field">
+              <span>密码</span>
+              <input id="registerPassword" type="password" autocomplete="new-password" minlength="6" maxlength="16" placeholder="6-16 位密码" required />
+            </label>
+            <label class="field">
+              <span>确认密码</span>
+              <input id="registerConfirmPassword" type="password" autocomplete="new-password" minlength="6" maxlength="16" placeholder="再次输入密码" required />
+            </label>
+            <label class="field">
+              <span>QQ</span>
+              <input id="registerQq" inputmode="numeric" autocomplete="off" maxlength="32" placeholder="用于找回密码" required />
+            </label>
+            <p class="auth-status" id="registerStatus" role="status" aria-live="polite"></p>
+            <button class="primary-button" id="registerSubmit" type="submit">创建账号</button>
+          </form>
+        </section>
+      </main>
+
+      <main class="home-view" id="homeView" hidden>
+        <aside class="side-drawer" id="sideDrawer" aria-label="功能导航">
+          <div class="drawer-brand">
+            <img src="/assets/logo.png" alt="DNF" />
+          </div>
+
+          <nav class="drawer-nav">
+            <button class="nav-item active" type="button" data-section="大厅">
+              <span class="nav-icon" aria-hidden="true"><svg><use href="#icon-home"></use></svg></span><span>大厅</span>
+            </button>
+            <button class="nav-item" type="button" data-section="邮件">
+              <span class="nav-icon" aria-hidden="true"><svg><use href="#icon-mail"></use></svg></span><span>邮件</span>
+            </button>
+            <button class="nav-item" type="button" data-section="充值">
+              <span class="nav-icon" aria-hidden="true"><svg><use href="#icon-recharge"></use></svg></span><span>充值</span>
+            </button>
+            <button class="nav-item" type="button" data-section="角色">
+              <span class="nav-icon" aria-hidden="true"><svg><use href="#icon-role"></use></svg></span><span>角色</span>
+            </button>
+            <button class="nav-item" type="button" data-section="背包">
+              <span class="nav-icon" aria-hidden="true"><svg><use href="#icon-backpack"></use></svg></span><span>背包</span>
+            </button>
+            <button class="nav-item" type="button" data-section="活动">
+              <span class="nav-icon" aria-hidden="true"><svg><use href="#icon-activity"></use></svg></span><span>活动</span>
+            </button>
+            <button class="nav-item" type="button" data-section="封禁" data-admin-only hidden>
+              <span class="nav-icon" aria-hidden="true"><svg><use href="#icon-ban"></use></svg></span><span>封禁</span>
+            </button>
+            <button class="nav-item" type="button" data-section="时装潜能">
+              <span class="nav-icon" aria-hidden="true"><svg><use href="#icon-fashion"></use></svg></span><span>时装潜能</span>
+            </button>
+            <button class="nav-item" type="button" data-section="权限" data-admin-only hidden>
+              <span class="nav-icon" aria-hidden="true"><svg><use href="#icon-permission"></use></svg></span><span>权限</span>
+            </button>
+            <button class="nav-item" type="button" data-section="系统" data-admin-only hidden>
+              <span class="nav-icon" aria-hidden="true"><svg><use href="#icon-settings"></use></svg></span><span>系统</span>
+            </button>
+            <button class="nav-item" type="button" data-section="按键连发">
+              <span class="nav-icon" aria-hidden="true"><svg><use href="#icon-rapid-fire"></use></svg></span><span>按键连发</span>
+            </button>
+          </nav>
+
+          <button
+            class="drawer-toggle"
+            id="drawerToggle"
+            type="button"
+            aria-label="收起功能导航"
+            aria-expanded="true"
+          >
+            <span aria-hidden="true">&lt;</span>
+          </button>
+        </aside>
+
+        <section class="gm-target-bar" id="gmTargetBar" aria-label="GM 操作目标" hidden>
+          <b>GM</b>
+          <select id="gmTargetType" aria-label="目标类型">
+            <option value="account_name">账号</option>
+            <option value="uid">UID</option>
+          </select>
+          <input id="gmTargetInput" autocomplete="off" placeholder="输入目标账号" />
+          <button id="gmTargetResolve" type="button">选择目标</button>
+          <span id="gmTargetSelected">未选择目标</span>
+        </section>
+
+        <section class="feature-workspace" id="characterWorkspace" aria-labelledby="characterWorkspaceTitle" hidden>
+          <header class="feature-heading">
+            <div>
+              <span class="eyebrow">CHARACTER CENTER</span>
+              <h2 id="characterWorkspaceTitle">我的角色</h2>
+            </div>
+            <div class="feature-summary">
+              <span id="characterScope">当前账号</span>
+              <strong id="characterCount">0 个角色</strong>
+            </div>
+          </header>
+
+          <div class="character-toolbar">
+            <label class="character-search">
+              <span class="visually-hidden">搜索角色</span>
+              <svg aria-hidden="true"><use href="#icon-role"></use></svg>
+              <input id="characterSearch" type="search" autocomplete="off" placeholder="搜索角色名或角色编号" />
+            </label>
+            <button class="character-refresh" id="characterRefresh" type="button">刷新角色</button>
+          </div>
+
+          <div class="character-content">
+            <div class="character-list-panel">
+              <p class="character-status" id="characterStatus" role="status" aria-live="polite">进入角色页后加载角色</p>
+              <div class="desktop-character-list" id="characterList"></div>
+              <footer class="character-pager">
+                <button id="characterPrev" type="button">上一页</button>
+                <span id="characterPage">第 1 / 1 页</span>
+                <button id="characterNext" type="button">下一页</button>
+              </footer>
+            </div>
+
+            <aside class="character-detail" aria-label="当前选择角色">
+              <span class="eyebrow">SELECTED CHARACTER</span>
+              <div id="characterDetailEmpty" class="character-detail-empty">选择一个角色查看详细信息</div>
+              <div id="characterDetailBody" hidden>
+                <div class="character-detail-name">
+                  <h3 id="characterDetailName">-</h3>
+                  <span id="characterDetailState">正常</span>
+                </div>
+                <dl>
+                  <div><dt>角色编号</dt><dd id="characterDetailNo">-</dd></div>
+                  <div><dt>等级</dt><dd id="characterDetailLevel">-</dd></div>
+                  <div><dt>职业</dt><dd id="characterDetailJob">-</dd></div>
+                  <div><dt>副职业</dt><dd id="characterDetailExpertJob">-</dd></div>
+                  <div><dt>决斗等级</dt><dd id="characterDetailPvpGrade">-</dd></div>
+                  <div><dt>决斗胜点</dt><dd id="characterDetailPvpPoint">-</dd></div>
+                </dl>
+                <button class="character-edit-open" id="characterEditOpen" type="button">修改角色</button>
+              </div>
+            </aside>
+          </div>
+        </section>
+
+        <section class="feature-workspace mail-workspace" id="mailWorkspace" aria-labelledby="mailWorkspaceTitle" hidden>
+          <header class="feature-heading">
+            <div>
+              <span class="eyebrow">CHARACTER MAIL</span>
+              <h2 id="mailWorkspaceTitle">角色邮件</h2>
+            </div>
+            <div class="feature-summary">
+              <span id="mailScope">当前账号</span>
+              <strong id="mailCharacterCount">0 个角色</strong>
+            </div>
+          </header>
+
+          <div class="mail-content">
+            <form class="mail-compose" id="mailForm" autocomplete="off">
+              <div class="mail-section-heading">
+                <div><span class="eyebrow">COMPOSE MAIL</span><h3>发送邮件</h3></div>
+                <span id="mailSelectedRecipient">未选择收件角色</span>
+              </div>
+
+              <label class="mail-field">
+                <span>收件角色</span>
+                <input id="mailRecipientSearch" placeholder="搜索角色名或角色编号" />
+              </label>
+              <label class="mail-field">
+                <span>邮件内容</span>
+                <input id="mailMessage" maxlength="512" placeholder="可为空" />
+              </label>
+              <div class="mail-value-grid">
+                <label class="mail-field">
+                  <span>附件类型</span>
+                  <span class="mail-select-shell">
+                    <select id="mailAttachmentType">
+                      <option value="stackable">普通物品</option>
+                      <option value="equipment">装备</option>
+                    </select>
+                  </span>
+                </label>
+                <label class="mail-field"><span>物品 ID</span><input id="mailItemId" inputmode="numeric" placeholder="可选" /></label>
+                <label class="mail-field">
+                  <span id="mailItemCountLabel">物品数量</span>
+                  <input id="mailItemCount" inputmode="numeric" value="1" />
+                  <input id="mailForgeLevel" inputmode="numeric" value="0" hidden />
+                </label>
+                <label class="mail-field"><span>金币</span><input id="mailGold" inputmode="numeric" value="0" /></label>
+              </div>
+              <div class="mail-equipment-grid" id="mailEquipmentFields" hidden>
+                <label class="mail-field"><span>强化等级</span><input id="mailEnhancementLevel" inputmode="numeric" value="0" /></label>
+                <label class="mail-field">
+                  <span>红字类型</span>
+                  <select id="mailAmplifyOption">
+                    <option value="0">无</option>
+                    <option value="1">异次元体力</option>
+                    <option value="2">异次元精神</option>
+                    <option value="3">异次元力量</option>
+                    <option value="4">异次元智力</option>
+                  </select>
+                </label>
+                <label class="mail-field"><span>红字初始值</span><input id="mailAmplifyValue" inputmode="numeric" value="0" /></label>
+              </div>
+
+              <div class="mail-form-actions">
+                <button class="mail-send-button" id="mailSend" type="submit">发送邮件</button>
+                <button class="mail-delete-button" id="mailDelete" type="button">清空角色邮件</button>
+              </div>
+              <div class="mail-global-actions" id="mailGlobalActions" hidden>
+                <button id="mailSendAll" type="button">发送全服邮件</button>
+                <button id="mailDeleteAll" type="button">清空全服邮件</button>
+              </div>
+              <p class="mail-operation-status" id="mailStatus" role="status" aria-live="polite">搜索并选择收件角色后发送邮件</p>
+            </form>
+
+            <div class="mail-browse">
+              <section class="mail-browser-panel">
+                <header><div><span class="eyebrow">RECIPIENT</span><h3>收件角色</h3></div><span id="mailCharacterStatus">等待加载</span></header>
+                <div class="mail-character-list" id="mailCharacterList"></div>
+                <footer class="mail-pager">
+                  <button id="mailCharacterPrev" type="button">上一页</button>
+                  <span id="mailCharacterPage">第 1 / 1 页</span>
+                  <button id="mailCharacterNext" type="button">下一页</button>
+                </footer>
+              </section>
+
+              <section class="mail-browser-panel mail-item-browser">
+                <header><div><span class="eyebrow">ATTACHMENT</span><h3>物品选择</h3></div><span id="mailItemStatus">输入名称或 ID 搜索</span></header>
+                <div class="mail-item-search">
+                  <input id="mailItemKeyword" placeholder="输入物品名或 ID" />
+                  <button id="mailSearchItem" type="button">搜索</button>
+                </div>
+                <div class="mail-item-results" id="mailItemResults"><div class="mail-empty">可先导入 PVF 后搜索物品</div></div>
+                <footer class="mail-pager">
+                  <button id="mailItemPrev" type="button" disabled>上一页</button>
+                  <span id="mailItemPage">第 1 / 1 页</span>
+                  <button id="mailItemNext" type="button" disabled>下一页</button>
+                </footer>
+              </section>
+            </div>
+          </div>
+        </section>
+
+        <section class="feature-workspace inventory-workspace" id="inventoryWorkspace" aria-labelledby="inventoryWorkspaceTitle" hidden>
+          <header class="feature-heading">
+            <div>
+              <span class="eyebrow">INVENTORY CENTER</span>
+              <h2 id="inventoryWorkspaceTitle">角色背包</h2>
+            </div>
+            <div class="feature-summary">
+              <span id="inventoryScopeSummary">物品栏</span>
+              <strong id="inventoryItemCount">0 个物品</strong>
+            </div>
+          </header>
+
+          <div class="inventory-toolbar">
+            <label class="inventory-search">
+              <span class="visually-hidden">搜索角色</span>
+              <svg aria-hidden="true"><use href="#icon-role"></use></svg>
+              <input id="inventoryCharacterSearch" placeholder="搜索角色名或角色编号" />
+            </label>
+            <label class="inventory-scope-field">
+              <span class="visually-hidden">背包范围</span>
+              <select id="inventoryScope">
+                <option value="inventory">物品栏</option>
+                <option value="equipslot">穿戴栏</option>
+                <option value="creature">宠物栏</option>
+                <option value="cargo">角色仓库</option>
+                <option value="account_cargo">账号仓库</option>
+              </select>
+            </label>
+            <button class="inventory-query-button" id="inventoryQuery" type="button">查询背包</button>
+          </div>
+
+          <div class="inventory-content">
+            <aside class="inventory-character-panel">
+              <header><div><span class="eyebrow">CHARACTER</span><h3>角色选择</h3></div><span id="inventoryCharacterStatus">等待加载</span></header>
+              <div class="inventory-character-list" id="inventoryCharacterList"></div>
+              <footer class="inventory-pager">
+                <button id="inventoryCharacterPrev" type="button">上一页</button>
+                <span id="inventoryCharacterPage">第 1 / 1 页</span>
+                <button id="inventoryCharacterNext" type="button">下一页</button>
+              </footer>
+            </aside>
+
+            <section class="inventory-item-panel">
+              <header>
+                <div>
+                  <span class="eyebrow">ITEM SLOTS</span>
+                  <h3 id="inventorySelectedCharacter">尚未选择角色</h3>
+                </div>
+                <div class="inventory-actions">
+                  <button id="inventoryDelete" type="button" disabled>删除选中物品</button>
+                  <button class="inventory-clear-button" id="inventoryClear" type="button">清空当前栏位</button>
+                </div>
+              </header>
+              <p class="inventory-status" id="inventoryStatus" role="status" aria-live="polite">选择角色后查询背包</p>
+              <div class="inventory-list" id="inventoryList"><div class="inventory-empty">尚未查询背包</div></div>
+            </section>
+          </div>
+        </section>
+
+        <section class="feature-workspace avatar-workspace" id="avatarWorkspace" aria-labelledby="avatarWorkspaceTitle" hidden>
+          <header class="feature-heading">
+            <div>
+              <span class="eyebrow">AVATAR POTENTIAL</span>
+              <h2 id="avatarWorkspaceTitle">时装潜能</h2>
+            </div>
+            <div class="feature-summary">
+              <span id="avatarSelectionSummary">未选择时装</span>
+              <strong id="avatarItemCount">0 件时装</strong>
+            </div>
+          </header>
+
+          <div class="avatar-toolbar">
+            <label class="inventory-search">
+              <span class="visually-hidden">搜索角色</span>
+              <svg aria-hidden="true"><use href="#icon-role"></use></svg>
+              <input id="avatarCharacterSearch" placeholder="搜索角色名或角色编号" />
+            </label>
+            <label class="avatar-option-field">
+              <span class="visually-hidden">时装潜能</span>
+              <select id="avatarHiddenOption"><option value="0">0 - 无</option></select>
+            </label>
+            <button class="inventory-query-button" id="avatarQuery" type="button">查询时装</button>
+            <button class="avatar-apply-button" id="avatarApply" type="button" disabled>设置潜能</button>
+          </div>
+
+          <div class="inventory-content">
+            <aside class="inventory-character-panel">
+              <header><div><span class="eyebrow">CHARACTER</span><h3>角色选择</h3></div><span id="avatarCharacterStatus">等待加载</span></header>
+              <div class="inventory-character-list" id="avatarCharacterList"></div>
+              <footer class="inventory-pager">
+                <button id="avatarCharacterPrev" type="button">上一页</button>
+                <span id="avatarCharacterPage">第 1 / 1 页</span>
+                <button id="avatarCharacterNext" type="button">下一页</button>
+              </footer>
+            </aside>
+
+            <section class="avatar-item-panel">
+              <header>
+                <div><span class="eyebrow">AVATAR ITEMS</span><h3 id="avatarSelectedCharacter">尚未选择角色</h3></div>
+                <span id="avatarStatus" role="status" aria-live="polite">选择角色后查询时装</span>
+              </header>
+              <div class="avatar-list" id="avatarList"><div class="inventory-empty">尚未查询时装</div></div>
+            </section>
+          </div>
+        </section>
+
+        <section class="feature-workspace recharge-workspace" id="rechargeWorkspace" aria-labelledby="rechargeWorkspaceTitle" hidden>
+          <header class="feature-heading">
+            <div>
+              <span class="eyebrow">ACCOUNT RECHARGE</span>
+              <h2 id="rechargeWorkspaceTitle">账号充值</h2>
+            </div>
+            <div class="feature-summary">
+              <span>当前账号</span>
+              <strong id="rechargeAccount">-</strong>
+            </div>
+          </header>
+
+          <div class="recharge-content">
+            <section class="recharge-balance-panel" aria-labelledby="rechargeBalanceTitle">
+              <header class="recharge-section-heading">
+                <div>
+                  <span class="eyebrow">CURRENT BALANCE</span>
+                  <h3 id="rechargeBalanceTitle">当前余额</h3>
+                </div>
+                <button id="rechargeRefresh" type="button">刷新余额</button>
+              </header>
+              <div class="recharge-balance-grid">
+                <article class="recharge-balance-card">
+                  <span>点券</span>
+                  <strong id="rechargeCera">-</strong>
+                  <small>CERA</small>
+                </article>
+                <article class="recharge-balance-card">
+                  <span>代币券</span>
+                  <strong id="rechargeCeraPoint">-</strong>
+                  <small>CERA POINT</small>
+                </article>
+              </div>
+              <p class="recharge-balance-note">余额数据来自当前登录账号，充值完成后会自动刷新。</p>
+            </section>
+
+            <form class="recharge-form" id="rechargeForm" autocomplete="off">
+              <div class="recharge-section-heading">
+                <div>
+                  <span class="eyebrow">RECHARGE SETTINGS</span>
+                  <h3>充值设置</h3>
+                </div>
+              </div>
+              <label class="recharge-field">
+                <span>充值类型</span>
+                <select id="rechargeType">
+                  <option value="cera">点券</option>
+                  <option value="cera_point">代币券</option>
+                </select>
+              </label>
+              <label class="recharge-field">
+                <span>操作方式</span>
+                <select id="rechargeAction">
+                  <option value="add">增加余额</option>
+                  <option value="set">设定余额</option>
+                </select>
+              </label>
+              <label class="recharge-field">
+                <span>数量</span>
+                <input id="rechargeAmount" inputmode="numeric" placeholder="请输入数量" />
+              </label>
+              <button class="recharge-submit" id="rechargeSubmit" type="submit">确认充值</button>
+              <p class="recharge-status" id="rechargeStatus" role="status" aria-live="polite">进入页面后自动查询余额</p>
+            </form>
+          </div>
+        </section>
+
+        <section class="feature-workspace gm-admin-workspace" id="eventWorkspace" aria-labelledby="eventWorkspaceTitle" hidden>
+          <header class="feature-heading">
+            <div>
+              <span class="eyebrow">EVENT CONTROL</span>
+              <h2 id="eventWorkspaceTitle">活动管理</h2>
+            </div>
+            <div class="feature-summary">
+              <span id="eventStatus">进入页面后加载活动</span>
+              <strong id="eventCount">0 个运行中</strong>
+            </div>
+          </header>
+          <div class="gm-admin-split">
+            <form class="gm-admin-form" id="eventForm" autocomplete="off">
+              <div class="gm-admin-section-title"><span class="eyebrow">ADD EVENT</span><h3>添加活动</h3></div>
+              <label><span>活动</span><select id="eventSelect"></select></label>
+              <div class="gm-inline-fields">
+                <label><span>参数 1</span><input id="eventParam1" inputmode="numeric" value="1" /></label>
+                <label><span>参数 2</span><input id="eventParam2" inputmode="numeric" value="0" /></label>
+              </div>
+              <div class="gm-form-actions">
+                <button id="eventRefresh" type="button">刷新</button>
+                <button class="primary" id="eventAdd" type="submit">添加活动</button>
+              </div>
+              <p class="gm-admin-status">活动变更后通常需要重启游戏服务。</p>
+            </form>
+            <section class="gm-admin-list-panel">
+              <header><div><span class="eyebrow">RUNNING EVENTS</span><h3>运行中的活动</h3></div><button class="danger" id="eventDelete" type="button" disabled>删除选中</button></header>
+              <div class="gm-admin-list" id="eventList"><div class="gm-admin-empty">当前没有运行中的活动</div></div>
+            </section>
+          </div>
+        </section>
+
+        <section class="feature-workspace gm-admin-workspace" id="banWorkspace" aria-labelledby="banWorkspaceTitle" hidden>
+          <header class="feature-heading">
+            <div>
+              <span class="eyebrow">ACCOUNT CONTROL</span>
+              <h2 id="banWorkspaceTitle">账号封禁</h2>
+            </div>
+            <div class="feature-summary">
+              <span id="banTarget">未选择目标账号</span>
+              <strong id="banState">等待查询</strong>
+            </div>
+          </header>
+          <div class="gm-admin-split">
+            <section class="gm-ban-overview">
+              <div class="gm-admin-section-title"><span class="eyebrow">BAN STATUS</span><h3>当前状态</h3></div>
+              <div class="gm-stat-grid">
+                <article><span>账号状态</span><strong id="banStateView">-</strong></article>
+                <article><span>限制类型</span><strong id="banTypeView">-</strong></article>
+                <article><span>开始时间</span><strong id="banStartView">-</strong></article>
+                <article><span>结束时间</span><strong id="banEndView">-</strong></article>
+              </div>
+              <div class="gm-ban-reason"><span>原因</span><strong id="banReasonView">-</strong></div>
+              <button id="banQuery" type="button">查询目标状态</button>
+            </section>
+            <form class="gm-admin-form" id="banForm" autocomplete="off">
+              <div class="gm-admin-section-title"><span class="eyebrow">BAN SETTINGS</span><h3>限制设置</h3></div>
+              <label><span>限制类型</span><select id="banPunishType"><option value="1">禁止登录</option><option value="4">限制交易</option></select></label>
+              <label><span>持续天数</span><input id="banDays" inputmode="numeric" value="365" /></label>
+              <label><span>原因</span><input id="banReason" maxlength="255" placeholder="可选" /></label>
+              <div class="gm-form-actions">
+                <button class="danger" id="banUnban" type="button">解除限制</button>
+                <button class="primary" id="banSubmit" type="submit">执行封禁</button>
+              </div>
+              <p class="gm-admin-status" id="banStatus">请先在页面顶部选择目标账号</p>
+            </form>
+          </div>
+        </section>
+
+        <section class="feature-workspace gm-admin-workspace" id="permissionWorkspace" aria-labelledby="permissionWorkspaceTitle" hidden>
+          <header class="feature-heading">
+            <div>
+              <span class="eyebrow">ACCOUNT PERMISSIONS</span>
+              <h2 id="permissionWorkspaceTitle">账号权限</h2>
+            </div>
+            <form class="gm-header-search" id="permissionSearchForm" autocomplete="off">
+              <input id="permissionKeyword" placeholder="输入账号或 UID" />
+              <button type="submit">搜索</button>
+            </form>
+          </header>
+          <div class="gm-admin-split gm-permission-layout">
+            <section class="gm-admin-list-panel">
+              <header><div><span class="eyebrow">ACCOUNTS</span><h3>游戏账号</h3></div><span id="permissionAccountCount">0 个结果</span></header>
+              <div class="gm-admin-list" id="permissionAccountList"><div class="gm-admin-empty">进入页面后加载最近账号</div></div>
+            </section>
+            <form class="gm-permission-panel" id="permissionForm">
+              <header><div><span class="eyebrow">SELECTED ACCOUNT</span><h3 id="permissionSelectedAccount">未选择账号</h3></div><button class="primary" id="permissionSave" type="submit" disabled>保存权限</button></header>
+              <div class="gm-permission-grid" id="permissionGrid"></div>
+              <p class="gm-admin-status" id="permissionStatus">选择账号后配置可用功能</p>
+            </form>
+          </div>
+        </section>
+
+        <section class="feature-workspace gm-admin-workspace gm-system-workspace" id="systemWorkspace" aria-labelledby="systemWorkspaceTitle" hidden>
+          <header class="feature-heading">
+            <div>
+              <span class="eyebrow">SYSTEM SETTINGS</span>
+              <h2 id="systemWorkspaceTitle">系统管理</h2>
+            </div>
+            <div class="gm-system-tabs" role="tablist">
+              <button class="active" type="button" data-system-tab="home">大厅设置</button>
+              <button type="button" data-system-tab="pvf">PVF 配置</button>
+              <button type="button" data-system-tab="logs">操作日志</button>
+            </div>
+          </header>
+          <div class="gm-system-content">
+            <form class="gm-system-panel active" id="systemHomePanel" data-system-panel="home" autocomplete="off">
+              <div class="gm-system-card">
+                <div class="gm-admin-section-title"><span class="eyebrow">HOME CONTENT</span><h3>大厅内容</h3></div>
+                <div class="gm-system-fields">
+                  <label><span>大厅标题</span><input id="systemHomeTitle" maxlength="80" /></label>
+                  <label><span>标题上方文案</span><input id="systemHomeEyebrow" maxlength="80" /></label>
+                  <label class="wide"><span>客户端下载地址</span><input id="systemClientDownloadUrl" maxlength="512" placeholder="留空则不提供更新跳转" spellcheck="false" /></label>
+                </div>
+              </div>
+              <div class="gm-system-card gm-announcement-editor">
+                <header><div class="gm-admin-section-title"><span class="eyebrow">ANNOUNCEMENTS</span><h3>公告列表</h3></div><button id="announcementAdd" type="button">新增公告</button></header>
+                <div id="announcementEditorList"></div>
+              </div>
+              <footer class="gm-system-footer"><span id="systemHomeStatus">最多保存 8 条公告</span><button class="primary" id="systemHomeSave" type="submit">保存大厅设置</button></footer>
+            </form>
+
+            <div class="gm-system-panel" id="systemPvfPanel" data-system-panel="pvf" hidden>
+              <form class="gm-system-card" id="pvfRefreshForm" autocomplete="off">
+                <div class="gm-admin-section-title"><span class="eyebrow">SERVER CACHE</span><h3>服务端 PVF 缓存</h3></div>
+                <div class="gm-system-fields pvf-fields">
+                  <label class="wide"><span>Script.pvf 路径</span><input id="pvfPath" placeholder="/home/neople/game/Script.pvf" /></label>
+                  <label><span>编码</span><select id="pvfEncode"><option value="big5">繁体（big5）</option><option value="gbk">简体（gbk）</option></select></label>
+                  <button class="primary" id="pvfRefresh" type="submit">导入缓存</button>
+                </div>
+                <p class="gm-admin-status" id="pvfStatus">尚未读取 PVF 状态</p>
+                <pre class="gm-pvf-log" id="pvfLog" hidden></pre>
+              </form>
+              <form class="gm-system-card" id="pvfMd5Form" autocomplete="off">
+                <div class="gm-admin-section-title"><span class="eyebrow">CLIENT VERIFY</span><h3>客户端 Script.pvf 校验</h3></div>
+                <div class="gm-system-fields pvf-fields">
+                  <label class="wide"><span>客户端 PVF MD5</span><input id="pvfClientMd5" maxlength="32" placeholder="留空关闭校验" spellcheck="false" /></label>
+                  <button class="primary" id="pvfMd5Save" type="submit">保存校验</button>
+                </div>
+                <p class="gm-admin-status" id="pvfMd5Status">未启用客户端 PVF 校验</p>
+              </form>
+            </div>
+
+            <section class="gm-system-panel" id="systemLogPanel" data-system-panel="logs" hidden>
+              <form class="gm-log-toolbar" id="logSearchForm" autocomplete="off">
+                <input id="logKeyword" placeholder="搜索操作、UID、IP 或详情" />
+                <button type="submit">查询日志</button>
+              </form>
+              <div class="gm-log-list" id="logList"><div class="gm-admin-empty">进入日志页后加载最近操作</div></div>
+              <footer class="gm-log-pager"><button id="logPrev" type="button">上一页</button><span id="logPage">第 1 / 1 页</span><button id="logNext" type="button">下一页</button></footer>
+            </section>
+          </div>
+        </section>
+
+        <section class="feature-workspace rapid-fire-workspace" id="rapidFireWorkspace" aria-labelledby="rapidFireWorkspaceTitle" hidden>
+          <header class="feature-heading">
+            <div>
+              <span class="eyebrow">RAPID FIRE</span>
+              <h2 id="rapidFireWorkspaceTitle">按键连发</h2>
+            </div>
+            <div class="feature-summary">
+              <span id="rapidFireNativeStatus">等待读取</span>
+              <strong id="rapidFireCount">0 个按键</strong>
+            </div>
+          </header>
+
+          <div class="rapid-fire-content">
+            <form class="rapid-fire-form" id="rapidFireForm" autocomplete="off">
+              <div class="rapid-fire-section-heading">
+                <span class="eyebrow">ADD KEY</span>
+                <h3>添加连发按键</h3>
+              </div>
+              <label class="rapid-fire-field">
+                <span>按键</span>
+                <input id="rapidFireKey" maxlength="1" placeholder="例如 X" />
+              </label>
+              <label class="rapid-fire-field">
+                <span>连发间隔（毫秒）</span>
+                <input id="rapidFireInterval" inputmode="numeric" value="20" />
+              </label>
+              <button class="rapid-fire-add" id="rapidFireAdd" type="submit">添加按键</button>
+              <button class="rapid-fire-add" id="rapidFireInstallDriver" type="button" hidden>安装驱动</button>
+              <p class="rapid-fire-status" id="rapidFireStatus" role="status" aria-live="polite">仅游戏内生效</p>
+            </form>
+
+            <section class="rapid-fire-list-panel" aria-labelledby="rapidFireListTitle">
+              <header>
+                <div>
+                  <span class="eyebrow">CONFIGURED KEYS</span>
+                  <h3 id="rapidFireListTitle">已设置按键</h3>
+                </div>
+                <span>1–10000 ms</span>
+              </header>
+              <div class="rapid-fire-list" id="rapidFireList">
+                <div class="rapid-fire-empty">尚未添加连发按键</div>
+              </div>
+            </section>
+          </div>
+        </section>
+
+        <section class="announcement-panel" id="announcementPanel" aria-label="公告">
+          <div class="panel-heading">
+            <div>
+              <span class="eyebrow" id="homeEyebrow">ADVENTURER NEWS</span>
+              <h2 id="homeTitle">公告</h2>
+            </div>
+          </div>
+
+          <div class="announcement-list" id="announcementList">
+            <button type="button"><span><b>公告</b> 正在加载服务器公告</span><time>···</time></button>
+          </div>
+
+          <div class="poster-carousel" id="posterCarousel" aria-label="活动海报">
+            <div class="poster-dots" aria-hidden="true">
+              <span class="active"></span><span></span><span></span>
+            </div>
+          </div>
+        </section>
+
+        <div class="launch-area" id="launchArea">
+          <span class="client-state" id="clientState"><i></i> 等待登录</span>
+          <button class="launch-button" id="launchButton" type="button" disabled>
+            <span class="play-icon" aria-hidden="true"></span>
+            <span>
+              <strong id="launchButtonTitle">启动游戏</strong>
+              <small id="launchButtonSubtitle">START GAME</small>
+            </span>
+          </button>
+        </div>
+      </main>
+
+      <div class="character-editor-overlay" id="characterEditorOverlay" hidden>
+        <section class="character-editor" role="dialog" aria-modal="true" aria-labelledby="characterEditorTitle">
+          <button class="password-panel-close" id="characterEditorClose" type="button" aria-label="关闭角色修改">×</button>
+          <header class="character-editor-heading">
+            <div>
+              <span class="eyebrow">CHARACTER SETTINGS</span>
+              <h2 id="characterEditorTitle">修改角色</h2>
+            </div>
+            <span id="characterEditorIdentity">尚未选择角色</span>
+          </header>
+
+          <div class="character-editor-section">
+            <h3>角色数值</h3>
+            <div class="character-editor-row character-editor-stats">
+              <label>
+                <span>等级</span>
+                <input id="characterEditLevel" inputmode="numeric" autocomplete="off" />
+              </label>
+              <button id="characterEditLevelSubmit" type="button">修改等级</button>
+              <label>
+                <span>决斗等级</span>
+                <select id="characterEditPvpGrade"></select>
+              </label>
+              <button id="characterEditPvpGradeSubmit" type="button">修改决斗等级</button>
+              <label>
+                <span>决斗胜点</span>
+                <input id="characterEditPvpPoint" inputmode="numeric" autocomplete="off" />
+              </label>
+              <button id="characterEditPvpPointSubmit" type="button">修改决斗胜点</button>
+            </div>
+          </div>
+
+          <div class="character-editor-section">
+            <h3>职业设置</h3>
+            <div class="character-editor-job-grid">
+              <label><span>职业</span><select id="characterEditJob"></select></label>
+              <label><span>转职</span><select id="characterEditGrowType"></select></label>
+              <label>
+                <span>觉醒</span>
+                <select id="characterEditWakeFlag">
+                  <option value="0">0</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                </select>
+              </label>
+              <label><span>副职业</span><select id="characterEditExpertJob"></select></label>
+              <button id="characterEditJobSubmit" type="button">修改职业</button>
+            </div>
+          </div>
+
+          <footer class="character-editor-footer">
+            <div class="character-visibility-actions">
+              <button class="character-danger-button" id="characterDelete" type="button">删除角色</button>
+              <button id="characterRecover" type="button">恢复角色</button>
+            </div>
+            <p id="characterEditStatus" role="status" aria-live="polite">请选择要修改的内容</p>
+          </footer>
+        </section>
+      </div>
+
+      <div class="mail-confirm-overlay" id="mailConfirmOverlay" hidden>
+        <section class="mail-confirm-dialog" role="dialog" aria-modal="true" aria-labelledby="mailConfirmTitle">
+          <span class="eyebrow">CONFIRM OPERATION</span>
+          <h2 id="mailConfirmTitle">清空角色邮件</h2>
+          <p id="mailConfirmText">确定清空所选角色邮箱中的所有未删除邮件？</p>
+          <div>
+            <button id="mailConfirmCancel" type="button">取消</button>
+            <button class="mail-confirm-danger" id="mailConfirmSubmit" type="button">确认清空</button>
+          </div>
+        </section>
+      </div>
+
+      <div class="mail-confirm-overlay" id="inventoryConfirmOverlay" hidden>
+        <section class="mail-confirm-dialog" role="dialog" aria-modal="true" aria-labelledby="inventoryConfirmTitle">
+          <span class="eyebrow">CONFIRM OPERATION</span>
+          <h2 id="inventoryConfirmTitle">确认背包操作</h2>
+          <p id="inventoryConfirmText">确定执行当前操作？</p>
+          <div>
+            <button id="inventoryConfirmCancel" type="button">取消</button>
+            <button class="mail-confirm-danger" id="inventoryConfirmSubmit" type="button">确认操作</button>
+          </div>
+        </section>
+      </div>
+
+      <div class="mail-confirm-overlay" id="gmConfirmOverlay" hidden>
+        <section class="mail-confirm-dialog" role="dialog" aria-modal="true" aria-labelledby="gmConfirmTitle">
+          <span class="eyebrow">CONFIRM GM OPERATION</span>
+          <h2 id="gmConfirmTitle">确认 GM 操作</h2>
+          <p id="gmConfirmText">确定执行当前操作？</p>
+          <div>
+            <button id="gmConfirmCancel" type="button">取消</button>
+            <button class="mail-confirm-danger" id="gmConfirmSubmit" type="button">确认操作</button>
+          </div>
+        </section>
+      </div>
+
+      <div class="password-overlay" id="passwordOverlay" hidden>
+        <section class="password-panel" role="dialog" aria-modal="true" aria-labelledby="passwordPanelTitle">
+          <button class="password-panel-close" id="passwordPanelClose" type="button" aria-label="关闭密码设置">×</button>
+          <div class="login-emblem password-emblem" aria-hidden="true">
+            <svg><use href="#icon-account"></use></svg>
+          </div>
+          <h2 id="passwordPanelTitle">找回密码</h2>
+          <p id="passwordPanelHint">使用注册时填写的 QQ 验证身份</p>
+          <div class="account-details" id="accountDetails" hidden>
+            <label class="field">
+              <span>UID</span>
+              <input id="accountDetailUid" value="-" readonly />
+            </label>
+          </div>
+          <form class="auth-form" id="passwordResetForm" autocomplete="off">
+            <label class="field" id="resetAccountField">
+              <span>账号</span>
+              <input id="resetAccount" inputmode="numeric" autocomplete="off" placeholder="请输入原账号" required />
+            </label>
+            <label class="field">
+              <span id="resetVerificationLabel">注册 QQ</span>
+              <input id="resetQq" inputmode="numeric" autocomplete="off" placeholder="请输入注册时填写的 QQ" required />
+            </label>
+            <label class="field">
+              <span>新密码</span>
+              <input id="resetNewPassword" type="password" autocomplete="new-password" placeholder="6-16 位新密码" minlength="6" maxlength="16" required />
+            </label>
+            <label class="field">
+              <span>确认新密码</span>
+              <input id="resetConfirmPassword" type="password" autocomplete="new-password" placeholder="再次输入新密码" minlength="6" maxlength="16" required />
+            </label>
+            <p class="password-status" id="resetPasswordStatus" role="status" aria-live="polite"></p>
+            <button class="primary-button" id="resetPasswordSubmit" type="submit">设置新密码</button>
+          </form>
+          <button class="logout-button" id="logoutButton" type="button" hidden>退出当前账号</button>
+        </section>
+      </div>
+
+      <div class="password-overlay" id="announcementOverlay" hidden>
+        <section class="announcement-dialog" role="dialog" aria-modal="true" aria-labelledby="announcementTitle">
+          <button class="password-panel-close" id="announcementClose" type="button" aria-label="关闭公告">×</button>
+          <span class="eyebrow">ADVENTURER NEWS</span>
+          <h2 id="announcementTitle">公告</h2>
+          <p id="announcementContent">暂无公告内容</p>
+        </section>
+      </div>
+
+      <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    </div>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

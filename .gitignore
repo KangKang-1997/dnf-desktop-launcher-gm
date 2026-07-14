@@ -1,0 +1,40 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+target/
+*.exe
+*.msi
+*.nsis.zip
+*.app
+*.dmg
+
+# Runtime/cache files
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# Local environments
+.venv/
+venv/
+env/
+
+# Local/editor files
+.vscode/
+.idea/
+*.log
+*.tmp
+
+# Codex/local working files
+.codex/
+.agents/
+preview_loading/
+
+# Generated Tauri schemas
+desktop_launcher/src-tauri/gen/
+
+# Local server config; commit config.example.json instead
+server/config.json

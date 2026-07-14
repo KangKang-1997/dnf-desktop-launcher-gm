@@ -1,0 +1,59 @@
+{
+  "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
+  "productName": "地下城与勇士",
+  "version": "0.1.0",
+  "identifier": "com.dnf.adventurer.launcher",
+  "build": {
+    "beforeDevCommand": "npm run dev",
+    "devUrl": "http://127.0.0.1:1420",
+    "beforeBuildCommand": "npm run build",
+    "frontendDist": "../dist"
+  },
+  "app": {
+    "windows": [
+      {
+        "label": "splash",
+        "url": "splash.html",
+        "title": "地下城与勇士",
+        "width": 240,
+        "height": 170,
+        "center": true,
+        "decorations": false,
+        "resizable": false,
+        "fullscreen": false,
+        "transparent": true,
+        "visible": true,
+        "alwaysOnTop": true,
+        "skipTaskbar": true,
+        "shadow": false,
+        "backgroundColor": "#00000000",
+        "incognito": true,
+        "generalAutofillEnabled": false
+      },
+      {
+        "label": "main",
+        "title": "地下城与勇士",
+        "width": 1280,
+        "height": 720,
+        "minWidth": 1024,
+        "minHeight": 576,
+        "center": true,
+        "decorations": false,
+        "resizable": true,
+        "fullscreen": false,
+        "visible": false,
+        "backgroundColor": "#050813",
+        "incognito": true,
+        "generalAutofillEnabled": false
+      }
+    ],
+    "security": {
+      "csp": null
+    }
+  },
+  "bundle": {
+    "active": false,
+    "targets": "all",
+    "icon": ["icons/icon.ico"]
+  }
+}

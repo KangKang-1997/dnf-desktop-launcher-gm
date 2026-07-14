@@ -1,0 +1,7 @@
+fastapi==0.78.0
+pydantic==1.9.2
+starlette==0.19.1
+uvicorn==0.16.0
+anyio==3.6.2
+pymysql==1.0.2
+zhconv==1.4.3
