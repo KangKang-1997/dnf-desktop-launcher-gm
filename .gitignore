@@ -38,3 +38,6 @@ desktop_launcher/src-tauri/gen/
 
 # Local server config; commit config.example.json instead
 server/config.json
+
+# Source icon fragments; final icon is desktop_launcher/src-tauri/icons/icon.ico
+ICON/
