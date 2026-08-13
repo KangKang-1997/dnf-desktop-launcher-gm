@@ -1,0 +1,15 @@
+{
+  "listen_host": "0.0.0.0",
+  "listen_port": 8000,
+  "server_host": "127.0.0.1",
+  "db_port": 3306,
+  "db_user": "数据库用户名",
+  "db_password": "数据库密码",
+  "game_db_name": "d_taiwan",
+  "tool_db_name": "dnf_launcher",
+  "db_charset": "utf8",
+  "session_secret": "发布时改成随机长字符串",
+  "session_ttl_seconds": 86400,
+  "cors_origins": ["*"],
+  "login_private_key_path": "/opt/server/privatekey.pem"
+}

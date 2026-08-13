@@ -1,8 +1,7 @@
 $ErrorActionPreference = "Stop"
 
-# Change this API address before running this script.
-
-$ApiBase = "http://服务器IP:8000"
+# Set DNF_LAUNCHER_API_BASE before running this script to build for a remote server.
+$ApiBase = if ($env:DNF_LAUNCHER_API_BASE) { $env:DNF_LAUNCHER_API_BASE } else { "http://127.0.0.1:8000" }
 
 if ($ApiBase -notmatch '^https?://') {
     throw "ApiBase must start with http:// or https://. Current value: $ApiBase"
@@ -30,7 +29,7 @@ try {
     npm install
 
     Write-Host "Building launcher EXE..."
-    npm run tauri -- build
+    node ".\node_modules\@tauri-apps\cli\tauri.js" build
 
     $ExePath = Join-Path $LauncherDir "src-tauri\target\release\dnf-desktop-launcher.exe"
     if (!(Test-Path $ExePath)) {

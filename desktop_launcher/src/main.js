@@ -325,6 +325,7 @@ let characterJobOptionsLoading = null;
 let inventoryConfirmMode = "";
 let avatarOptionsLoaded = false;
 let avatarOptionsLoading = null;
+let pvfRefreshJobPolling = false;
 const characterState = {
   page: 1,
   limit: 8,
@@ -2229,6 +2230,48 @@ function renderPvfStatus(data) {
   pvfStatus.textContent = `已加载 ${formatNumber(data.stackable_count)} 个道具、${formatNumber(data.equipment_count)} 件装备 · MD5 ${data.md5 || "-"} · ${data.updated_at || "刚刚"}`;
 }
 
+function renderPvfRefreshJob(job) {
+  if (!job) return;
+  if (job.status === "completed") {
+    const result = job.result || job;
+    renderPvfStatus({ ...result, loaded: true, pvf_path: result.pvf_path || result.path, updated_at: job.finished_at || "刚刚" });
+    if (result.logs?.length) {
+      pvfLog.textContent = result.logs.join("\n");
+      pvfLog.hidden = false;
+    }
+    characterJobOptions = null;
+    characterJobOptionsLoading = null;
+    return;
+  }
+  if (job.status === "failed") {
+    pvfStatus.textContent = `PVF 导入失败：${job.error || "未知错误"}`;
+    return;
+  }
+  pvfStatus.textContent = "PVF 导入中";
+}
+
+function sleep(ms) {
+  return new Promise((resolve) => window.setTimeout(resolve, ms));
+}
+
+async function waitForPvfRefreshJob(jobId) {
+  if (!jobId || pvfRefreshJobPolling) return null;
+  pvfRefreshJobPolling = true;
+  try {
+    while (true) {
+      await sleep(2500);
+      const data = await api(`/api/admin/pvf/refresh/${jobId}`, { method: "GET", timeoutMs: 15000 });
+      const job = data.job;
+      renderPvfRefreshJob(job);
+      if (!job || job.status === "completed" || job.status === "failed") {
+        return job;
+      }
+    }
+  } finally {
+    pvfRefreshJobPolling = false;
+  }
+}
+
 async function loadSystemData(force = false) {
   if (!isAdmin() || systemState.loading || (systemState.loaded && !force)) return;
   systemState.loading = true;
@@ -2245,6 +2288,12 @@ async function loadSystemData(force = false) {
     systemState.announcements = home.announcements.slice(0, 8).map(announcementValue);
     renderAnnouncementEditor();
     renderPvfStatus(pvfData);
+    if (["queued", "running"].includes(pvfData.refresh_job?.status)) {
+      renderPvfRefreshJob(pvfData.refresh_job);
+      waitForPvfRefreshJob(pvfData.refresh_job.id).finally(() => {
+        setCharacterButtonBusy(pvfRefresh, false);
+      });
+    }
     systemState.loaded = true;
     systemHomeStatus.textContent = `已读取 ${systemState.announcements.length} 条公告`;
   } catch (error) {
@@ -3108,21 +3157,16 @@ pvfRefreshForm.addEventListener("submit", async (event) => {
   }
   pvfPath.value = path;
   setCharacterButtonBusy(pvfRefresh, true, "导入中");
-  pvfStatus.textContent = "PVF 读取中，请等待";
+  pvfStatus.textContent = "PVF 导入任务已提交，正在等待服务端处理";
   pvfLog.hidden = true;
   try {
     const data = await api("/api/admin/pvf/refresh", {
       method: "POST",
-      timeoutMs: 120000,
+      timeoutMs: 15000,
       body: JSON.stringify({ pvf_path: path, encode: pvfEncode.value }),
     });
-    renderPvfStatus({ ...data, loaded: true, pvf_path: data.path, updated_at: "刚刚" });
-    if (data.logs?.length) {
-      pvfLog.textContent = data.logs.join("\n");
-      pvfLog.hidden = false;
-    }
-    characterJobOptions = null;
-    characterJobOptionsLoading = null;
+    renderPvfRefreshJob(data.job);
+    await waitForPvfRefreshJob(data.job?.id);
   } catch (error) {
     pvfStatus.textContent = `PVF 导入失败：${errorMessage(error, "未知错误")}`;
   } finally {
