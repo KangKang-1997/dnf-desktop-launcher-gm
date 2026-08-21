@@ -56,7 +56,7 @@ go_server/config.example.json
   "session_secret": "发布时改成随机长字符串",
   "session_ttl_seconds": 86400,
   "cors_origins": ["*"],
-  "login_private_key_path": "/go_server/privatekey.pem"
+  "login_private_key_path": "/home/neople/game/privatekey.pem"
 }
 ```
 
@@ -77,7 +77,17 @@ $env:GOARCH="amd64"
 go build -o .\dist\dnf-server-linux-amd64 .\cmd\dnf-server
 ```
 
-部署时将服务端二进制、`config.json`、`privatekey.pem` 放到同一服务目录。MySQL 与服务端在同机时，`server_host` 可以继续使用 `127.0.0.1`。
+部署时将服务端二进制、`config.json`、`privatekey.pem` 放到服务端目录。MySQL 与服务端在同机时，`server_host` 可以继续使用 `127.0.0.1`。
+
+Linux 生成登录密钥：
+
+```bash
+sudo mkdir -p /home/neople/game
+sudo openssl genrsa -out /home/neople/game/privatekey.pem 1024
+sudo openssl rsa -in /home/neople/game/privatekey.pem -pubout -out /home/neople/game/publickey.pem
+sudo chmod 600 /home/neople/game/privatekey.pem
+sudo chmod 644 /home/neople/game/publickey.pem
+```
 
 海报文件从服务端二进制同目录读取：
 
