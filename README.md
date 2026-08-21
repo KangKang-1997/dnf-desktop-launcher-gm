@@ -85,7 +85,7 @@ go build -o .\dist\dnf-server-linux-amd64 .\cmd\dnf-server
 posters/
 ```
 
-默认公告仍保留 `/api/posters/sample-*` 引用，发布包不提供默认图片文件；需要展示图片时，由维护人员在 `posters/` 中放入匹配文件或在后台改成实际海报地址。
+默认公告图片引用为 `/api/posters/sample-*`。需要展示图片时，由维护人员在 `posters/` 中放入匹配文件，也可以在后台改成实际海报地址。
 
 ## 桌面端
 
@@ -142,23 +142,3 @@ Script.pvf
 - 登录器前端和默认背景图已编译进 EXE，客户端不需要 `web/` 或背景图目录。
 - 按键连发配置保存到 `%LOCALAPPDATA%\DNFLauncher\rapid-fire.json`。
 - 内置 Interception 文件按需释放到 `%LOCALAPPDATA%\DNFLauncher\Interception`。
-
-## Git 与配置约定
-
-不会提交真实运行配置：
-
-```text
-go_server/config.json
-```
-
-不会提交构建产物和本地依赖：
-
-```text
-desktop_launcher/node_modules/
-desktop_launcher/dist/
-cpp_launcher/build*/
-cpp_launcher/obj/
-go_server/dist/
-```
-
-发布前使用 `go_server/config.example.json` 复制出真实 `config.json`，并将 `session_secret` 改为随机长字符串。
