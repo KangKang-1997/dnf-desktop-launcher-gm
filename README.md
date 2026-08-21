@@ -82,11 +82,10 @@ go build -o .\dist\dnf-server-linux-amd64 .\cmd\dnf-server
 Linux 生成登录密钥：
 
 ```bash
-sudo mkdir -p /home/neople/game
-sudo openssl genrsa -out /home/neople/game/privatekey.pem 1024
-sudo openssl rsa -in /home/neople/game/privatekey.pem -pubout -out /home/neople/game/publickey.pem
-sudo chmod 600 /home/neople/game/privatekey.pem
-sudo chmod 644 /home/neople/game/publickey.pem
+openssl genrsa -out /home/neople/game/privatekey.pem 1024
+openssl rsa -in /home/neople/game/privatekey.pem -pubout -out /home/neople/game/publickey.pem
+chmod 600 /home/neople/game/privatekey.pem
+chmod 644 /home/neople/game/publickey.pem
 ```
 
 海报文件从服务端二进制同目录读取：
