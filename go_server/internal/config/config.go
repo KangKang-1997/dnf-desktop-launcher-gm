@@ -37,7 +37,7 @@ func Default() Settings {
 		SessionSecret:       "发布时改成随机长字符串",
 		SessionTTLSeconds:   86400,
 		CORSOrigins:         []string{"*"},
-		LoginPrivateKeyPath: "/opt/server/privatekey.pem",
+		LoginPrivateKeyPath: "/go_server/privatekey.pem",
 	}
 }
 

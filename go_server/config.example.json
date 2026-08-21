@@ -11,5 +11,5 @@
   "session_secret": "发布时改成随机长字符串",
   "session_ttl_seconds": 86400,
   "cors_origins": ["*"],
-  "login_private_key_path": "/opt/server/privatekey.pem"
+  "login_private_key_path": "/go_server/privatekey.pem"
 }
