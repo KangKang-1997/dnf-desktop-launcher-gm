@@ -362,9 +362,9 @@ input[type="checkbox"] {
   position: absolute;
   inset: 0 auto 0 0;
   z-index: 50;
-  width: 268px;
+  width: 224px;
   border-right: 1px solid rgba(255, 255, 255, 0.13);
-  border-radius: 0 22px 22px 0;
+  border-radius: 0 16px 16px 0;
   background:
     linear-gradient(180deg, rgba(19, 25, 38, 0.96), rgba(5, 10, 18, 0.9)),
     rgba(6, 10, 18, 0.9);
@@ -374,19 +374,15 @@ input[type="checkbox"] {
   backdrop-filter: blur(22px) saturate(118%);
 }
 
-.side-drawer.collapsed {
-  transform: translateX(-100%);
-}
-
 .drawer-brand {
   display: grid;
   place-items: center;
-  height: 205px;
-  padding-top: 18px;
+  height: 176px;
+  padding-top: 16px;
 }
 
 .drawer-brand img {
-  width: 146px;
+  width: 122px;
   height: auto;
   filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.55));
 }
@@ -399,11 +395,11 @@ input[type="checkbox"] {
 .nav-item {
   position: relative;
   display: grid;
-  grid-template-columns: 42px 1fr;
+  grid-template-columns: 36px 1fr;
   align-items: center;
   width: 100%;
-  height: 56px;
-  padding: 0 24px 0 30px;
+  height: 50px;
+  padding: 0 18px 0 22px;
   color: rgba(255, 255, 255, 0.78);
   background: transparent;
   text-align: left;
@@ -437,44 +433,18 @@ input[type="checkbox"] {
 .nav-icon {
   display: grid;
   place-items: center;
-  width: 28px;
-  height: 28px;
+  width: 26px;
+  height: 26px;
 }
 
 .nav-icon svg {
-  width: 23px;
-  height: 23px;
+  width: 22px;
+  height: 22px;
   fill: none;
   stroke: currentColor;
   stroke-width: 1.65;
   stroke-linecap: round;
   stroke-linejoin: round;
-}
-
-.drawer-toggle {
-  position: absolute;
-  top: 50%;
-  right: -32px;
-  display: grid;
-  place-items: center;
-  width: 32px;
-  height: 72px;
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  border-left: 0;
-  border-radius: 0 13px 13px 0;
-  color: rgba(255, 255, 255, 0.9);
-  background: rgba(10, 16, 27, 0.88);
-  box-shadow: 10px 0 24px rgba(0, 0, 0, 0.24);
-  font-size: 24px;
-  transform: translateY(-50%);
-  backdrop-filter: blur(14px);
-  transition: background 150ms ease, border-color 150ms ease, color 150ms ease;
-}
-
-.drawer-toggle:hover {
-  color: #fff;
-  border-color: rgba(255, 255, 255, 0.24);
-  background: rgba(20, 28, 42, 0.96);
 }
 
 .visually-hidden {
@@ -491,7 +461,7 @@ input[type="checkbox"] {
 .feature-workspace {
   position: absolute;
   z-index: 20;
-  inset: 76px 38px 30px 300px;
+  inset: 76px 38px 30px 254px;
   display: flex;
   flex-direction: column;
   min-width: 0;
@@ -504,10 +474,6 @@ input[type="checkbox"] {
   box-shadow: 0 28px 70px rgba(0, 0, 0, 0.42);
   backdrop-filter: blur(22px) saturate(118%);
   transition: left 260ms cubic-bezier(0.2, 0.74, 0.25, 1);
-}
-
-.home-view.drawer-collapsed .feature-workspace {
-  left: 54px;
 }
 
 .gm-target-bar {
@@ -3183,19 +3149,20 @@ body.gm-mode .nav-item {
 
 @media (max-width: 1120px), (max-height: 650px) {
   .side-drawer {
-    width: 236px;
+    width: 212px;
   }
 
   .drawer-brand {
-    height: 144px;
+    height: 136px;
   }
 
   .drawer-brand img {
-    width: 112px;
+    width: 102px;
   }
 
   .nav-item {
-    height: 48px;
+    height: 46px;
+    padding: 0 16px 0 20px;
   }
 
   body.gm-mode .drawer-brand {
@@ -3239,11 +3206,7 @@ body.gm-mode .nav-item {
   }
 
   .feature-workspace {
-    inset: 64px 24px 22px 270px;
-  }
-
-  .home-view.drawer-collapsed .feature-workspace {
-    left: 48px;
+    inset: 64px 24px 22px 240px;
   }
 
   .gm-target-bar {

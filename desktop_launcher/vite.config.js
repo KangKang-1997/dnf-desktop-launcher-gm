@@ -7,6 +7,7 @@ export default defineConfig(() => {
   }
 
   return {
+    base: "./",
     clearScreen: false,
     define: {
       __DNF_LAUNCHER_API_BASE__: JSON.stringify(apiBase),
@@ -15,9 +16,6 @@ export default defineConfig(() => {
       host: "127.0.0.1",
       port: 1420,
       strictPort: true,
-      watch: {
-        ignored: ["**/src-tauri/**"],
-      },
     },
   };
 });

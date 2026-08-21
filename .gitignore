@@ -4,6 +4,9 @@ node_modules/
 # Build outputs
 dist/
 target/
+cpp_launcher/build/
+cpp_launcher/build*/
+cpp_launcher/obj/
 *.exe
 *.msi
 *.nsis.zip
@@ -33,12 +36,10 @@ env/
 .agents/
 preview_loading/
 
-# Generated Tauri schemas
-desktop_launcher/src-tauri/gen/
-
 # Local server config; commit config.example.json instead
-server/config.json
 go_server/config.json
 
-# Source icon fragments; final icon is desktop_launcher/src-tauri/icons/icon.ico
-ICON/
+# Embedded rapid-fire driver package
+!cpp_launcher/assets/interception/
+!cpp_launcher/assets/interception/**
+!cpp_launcher/assets/interception/install-interception.exe

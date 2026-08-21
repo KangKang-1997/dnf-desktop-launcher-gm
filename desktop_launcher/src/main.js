@@ -1,6 +1,4 @@
-import { invoke } from "@tauri-apps/api/core";
-import { getCurrentWindow } from "@tauri-apps/api/window";
-import { WebviewWindow } from "@tauri-apps/api/webviewWindow";
+import { native } from "./native/bridge.js";
 import "./styles.css";
 
 const body = document.body;
@@ -24,8 +22,6 @@ const registerQq = document.querySelector("#registerQq");
 const registerSubmit = document.querySelector("#registerSubmit");
 const registerStatus = document.querySelector("#registerStatus");
 const authTitle = document.querySelector("#authTitle");
-const sideDrawer = document.querySelector("#sideDrawer");
-const drawerToggle = document.querySelector("#drawerToggle");
 const toast = document.querySelector("#toast");
 const posterCarousel = document.querySelector("#posterCarousel");
 const homeEyebrow = document.querySelector("#homeEyebrow");
@@ -263,7 +259,7 @@ const gmConfirmCancel = document.querySelector("#gmConfirmCancel");
 const gmConfirmSubmit = document.querySelector("#gmConfirmSubmit");
 
 const apiBase = __DNF_LAUNCHER_API_BASE__;
-const isTauri = "__TAURI_INTERNALS__" in window;
+const isNative = native.isAvailable;
 const defaultHome = {
   home_title: "欢迎回来，勇士",
   home_eyebrow: "冒险准备完成",
@@ -538,12 +534,12 @@ function requireGmTarget(statusElement) {
 }
 
 async function loadLauncherWindowTitle() {
-  if (!isTauri) return;
+  if (!isNative) return;
   try {
-    const title = String(await invoke("get_launcher_window_title") || "").trim();
+    const title = String(await native.invoke("get_launcher_window_title") || "").trim();
     if (title) {
       document.title = title;
-      await getCurrentWindow().setTitle(title);
+      await native.setWindowTitle(title);
     }
   } catch (error) {
     console.error("读取登录器窗口标题失败", error);
@@ -551,9 +547,9 @@ async function loadLauncherWindowTitle() {
 }
 
 async function loadLauncherBackground() {
-  if (!isTauri) return;
+  if (!isNative) return;
   try {
-    const dataUrl = await invoke("get_launcher_background");
+    const dataUrl = await native.invoke("get_launcher_background");
     if (!dataUrl) return;
     await new Promise((resolve, reject) => {
       const image = new Image();
@@ -1877,7 +1873,7 @@ function renderRapidFire(snapshot) {
     ? "监听不可用"
     : snapshot?.ready
       ? "监听已就绪"
-      : isTauri
+      : isNative
         ? "监听器启动中"
         : "仅 EXE 中生效";
   rapidFireInstallDriver.hidden = !(snapshot?.error && snapshot?.driverInstallable);
@@ -1911,8 +1907,8 @@ function renderRapidFire(snapshot) {
         rapidFireStatus.textContent = `正在删除 ${config.key} 键`;
         try {
           let nextSnapshot;
-          if (isTauri) {
-            nextSnapshot = await invoke("remove_rapid_fire", { key: config.key });
+          if (isNative) {
+            nextSnapshot = await native.invoke("remove_rapid_fire", { key: config.key });
           } else {
             nextSnapshot = {
               configs: rapidFireState.configs.filter((item) => item.key !== config.key),
@@ -1945,8 +1941,8 @@ async function loadRapidFireConfigs(force = false) {
   rapidFireState.loading = true;
   rapidFireStatus.textContent = "正在读取连发配置";
   try {
-    const snapshot = isTauri
-      ? await invoke("list_rapid_fire")
+    const snapshot = isNative
+      ? await native.invoke("list_rapid_fire")
       : { configs: rapidFireState.configs, ready: false, error: null };
     renderRapidFire(snapshot);
     if (!snapshot.error) rapidFireStatus.textContent = "仅游戏内生效";
@@ -2394,7 +2390,7 @@ function enterSession(user) {
   accountSummary.hidden = false;
   activateSection("大厅");
   showToast("登录成功");
-  if (isTauri && currentUser.can_launch) {
+  if (isNative && currentUser.can_launch) {
     gameMonitorTimer = window.setTimeout(monitorGameProcess, 0);
   }
 }
@@ -2505,18 +2501,18 @@ function activateSection(section) {
 async function clearSavedCredential() {
   rememberedAccount = "";
   rememberPassword.checked = false;
-  if (!isTauri) return;
+  if (!isNative) return;
   try {
-    await invoke("clear_saved_login");
+    await native.invoke("clear_saved_login");
   } catch (error) {
     console.error("清除已保存密码失败", error);
   }
 }
 
 async function loadSavedCredential() {
-  if (!isTauri) return;
+  if (!isNative) return;
   try {
-    const saved = await invoke("load_saved_login");
+    const saved = await native.invoke("load_saved_login");
     if (!saved) return;
     loginAccount.value = saved.account;
     loginPassword.value = saved.password;
@@ -2532,8 +2528,8 @@ async function persistLoginChoice() {
     await clearSavedCredential();
     return;
   }
-  if (!isTauri) return;
-  await invoke("save_saved_login", {
+  if (!isNative) return;
+  await native.invoke("save_saved_login", {
     account: loginAccount.value.trim(),
     password: loginPassword.value,
   });
@@ -2866,14 +2862,6 @@ passwordResetForm.addEventListener("submit", async (event) => {
 logoutButton.addEventListener("click", () => {
   leaveSession();
   showToast("已退出当前账号");
-});
-
-drawerToggle.addEventListener("click", () => {
-  const collapsed = sideDrawer.classList.toggle("collapsed");
-  homeView.classList.toggle("drawer-collapsed", collapsed);
-  drawerToggle.querySelector("span").textContent = collapsed ? ">" : "<";
-  drawerToggle.setAttribute("aria-expanded", String(!collapsed));
-  drawerToggle.setAttribute("aria-label", collapsed ? "展开功能导航" : "收起功能导航");
 });
 
 document.querySelectorAll(".nav-item").forEach((button) => {
@@ -3687,7 +3675,7 @@ rapidFireInterval.addEventListener("input", () => {
 
 rapidFireInstallDriver.addEventListener("click", async () => {
   if (rapidFireState.loading) return;
-  if (!isTauri) {
+  if (!isNative) {
     rapidFireStatus.textContent = "浏览器预览不执行驱动安装";
     return;
   }
@@ -3695,7 +3683,7 @@ rapidFireInstallDriver.addEventListener("click", async () => {
   setCharacterButtonBusy(rapidFireInstallDriver, true, "启动中");
   rapidFireStatus.textContent = "正在请求管理员权限";
   try {
-    const snapshot = await invoke("install_interception_driver");
+    const snapshot = await native.invoke("install_interception_driver");
     renderRapidFire(snapshot);
     rapidFireStatus.textContent = "驱动安装程序已启动，请完成后重启电脑";
   } catch (error) {
@@ -3728,8 +3716,8 @@ rapidFireForm.addEventListener("submit", async (event) => {
   setCharacterButtonBusy(rapidFireAdd, true, "添加中");
   rapidFireStatus.textContent = `正在添加 ${key} 键`;
   try {
-    const snapshot = isTauri
-      ? await invoke("add_rapid_fire", { key, intervalMs })
+    const snapshot = isNative
+      ? await native.invoke("add_rapid_fire", { key, intervalMs })
       : {
           configs: [...rapidFireState.configs, { key, intervalMs }],
           ready: false,
@@ -3934,9 +3922,9 @@ accountSummary.addEventListener("click", () => {
 
 async function monitorGameProcess() {
   window.clearTimeout(gameMonitorTimer);
-  if (!currentUser?.can_launch || !isTauri) return;
+  if (!currentUser?.can_launch || !isNative) return;
   try {
-    const running = await invoke("is_game_running");
+    const running = await native.invoke("is_game_running");
     if (running) {
       clientState.innerHTML = "<i></i> 运行中";
       setGameButtonMode(true);
@@ -3960,7 +3948,7 @@ launchButton.addEventListener("click", async () => {
       return;
     }
     try {
-      if (isTauri) await invoke("open_url", { url: clientDownloadUrl });
+      if (isNative) await native.invoke("open_url", { url: clientDownloadUrl });
       else window.open(clientDownloadUrl, "_blank", "noopener");
     } catch (error) {
       showToast(`打开下载地址失败：${errorMessage(error, "未知错误")}`);
@@ -3971,7 +3959,7 @@ launchButton.addEventListener("click", async () => {
     launchButton.disabled = true;
     clientState.innerHTML = "<i></i> 正在结束";
     try {
-      await invoke("stop_game");
+      await native.invoke("stop_game");
       window.clearTimeout(gameMonitorTimer);
       setGameButtonMode(false);
       clientState.innerHTML = "<i></i> 客户端就绪";
@@ -3989,8 +3977,8 @@ launchButton.addEventListener("click", async () => {
   try {
     const data = await api("/api/launcher/direct", { method: "POST" });
     if (!data.dnf_token) throw new Error("服务器未返回 DNF 登录参数");
-    if (isTauri) {
-      await invoke("launch_game", {
+    if (isNative) {
+      await native.invoke("launch_game", {
         dnfToken: data.dnf_token,
         expectedPvfMd5: data.client_pvf_md5 || "",
       });
@@ -4023,32 +4011,64 @@ launchButton.addEventListener("click", async () => {
 document.querySelectorAll("[data-window-action]").forEach((button) => {
   button.addEventListener("click", async () => {
     const action = button.dataset.windowAction;
-    if (!isTauri) {
+    if (!isNative) {
       showToast(action === "close" ? "浏览器预览中无法关闭窗口" : "浏览器预览中无法最小化");
       return;
     }
-    const appWindow = getCurrentWindow();
-    if (action === "minimize") await appWindow.minimize();
-    else if (action === "close") await appWindow.close();
+    if (action === "minimize") await native.minimizeWindow();
+    else if (action === "close") await native.closeWindow();
   });
 });
 
+document.querySelectorAll("[data-tauri-drag-region]").forEach((region) => {
+  region.addEventListener("mousedown", async (event) => {
+    if (event.button !== 0 || !isNative) return;
+    if (event.target.closest("button, input, select, textarea, a, [role='button']")) return;
+    try {
+      await native.startWindowDrag();
+    } catch (error) {
+      console.warn("start window drag failed", error);
+    }
+  });
+});
+
+let revealStarted = false;
+
+function waitForWindowLoad() {
+  if (document.readyState === "complete") return Promise.resolve();
+  return new Promise((resolve) => {
+    window.addEventListener("load", resolve, { once: true });
+  });
+}
+
+function waitForAnimationFrame() {
+  return new Promise((resolve) => window.requestAnimationFrame(resolve));
+}
+
+function waitForDelay(ms) {
+  return new Promise((resolve) => window.setTimeout(resolve, ms));
+}
+
 async function revealWindow() {
-  if (!isTauri) return;
+  if (!isNative) return;
+  if (revealStarted) return;
+  revealStarted = true;
+  await waitForWindowLoad();
   await configurationReady;
-  await new Promise((resolve) => window.requestAnimationFrame(() => window.requestAnimationFrame(resolve)));
-  await getCurrentWindow().show();
-  try {
-    const splashWindow = await WebviewWindow.getByLabel("splash");
-    await splashWindow?.close();
-  } catch (error) {
-    console.warn("关闭启动提示窗口失败", error);
+  if (document.fonts?.ready) {
+    try {
+      await document.fonts.ready;
+    } catch (_) {
+    }
   }
+  await waitForAnimationFrame();
+  await waitForAnimationFrame();
+  await waitForDelay(80);
+  await native.revealWindow();
 }
 
 renderHome(defaultHome);
 const configurationReady = Promise.all([loadLauncherWindowTitle(), loadLauncherBackground()]);
 configurationReady.then(loadHomeSettings);
 loadSavedCredential();
-if (document.readyState === "complete") revealWindow();
-else window.addEventListener("load", revealWindow, { once: true });
+revealWindow();
