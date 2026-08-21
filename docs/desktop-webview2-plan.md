@@ -2,9 +2,9 @@
 
 ## Scope
 
-The Windows launcher is a C++ WebView2 host that loads the web frontend from
-`web/index.html`. The frontend is plain Vite HTML/CSS/JavaScript and talks to
-native code through `window.dnfNative`.
+The DNF Taiwan Windows launcher is a C++ WebView2 host that loads the web
+frontend from `web/index.html`. The frontend is plain Vite HTML/CSS/JavaScript
+and talks to native code through `window.dnfNative`.
 
 ## Native Bridge
 

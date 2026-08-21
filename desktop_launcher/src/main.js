@@ -2494,7 +2494,7 @@ function activateSection(section) {
     loadSystemData();
     setSystemTab(systemState.tab);
   } else if (section !== "大厅" && section !== "账号") {
-    showToast(`${section}功能将在后续阶段迁移`);
+    showToast(`${section}功能暂未开放`);
   }
 }
 

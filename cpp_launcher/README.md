@@ -1,6 +1,6 @@
 # C++ WebView2 Launcher
 
-This is the Windows desktop shell for the DNF launcher.
+This is the Windows desktop shell for the DNF Taiwan launcher.
 
 Current scope:
 

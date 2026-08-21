@@ -1,12 +1,10 @@
-# DNF Desktop Launcher GM
+# DNF Taiwan Desktop Launcher GM
 
-这是一个面向 DNF 私服管理场景的桌面登录器和 GM 管理工具。当前版本已收敛为：
+这是一个面向 DNF 台服管理场景的桌面登录器和 GM 管理工具。
 
 - 服务端：Go HTTP API
 - 桌面端：C++ WebView2 原生窗口
 - 前端：Vite + HTML/CSS/JavaScript
-
-旧 Python 服务端和 Tauri/Rust 桌面壳已移除。
 
 ## 目录结构
 
@@ -14,7 +12,7 @@
 go_server/                 Go 服务端源码
 desktop_launcher/          Web 前端源码
 cpp_launcher/              C++ WebView2 桌面壳
-docs/                      架构与迁移说明
+docs/                      架构说明
 build-cpp-launcher.ps1     Windows 桌面端构建脚本
 ```
 
