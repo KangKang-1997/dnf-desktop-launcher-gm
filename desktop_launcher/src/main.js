@@ -566,7 +566,7 @@ async function loadLauncherBackground() {
     });
     backgroundArt.style.backgroundImage = `url("${dataUrl}")`;
   } catch (error) {
-    console.warn("加载客户端背景图失败，使用内置底图", error);
+    console.warn("加载内置背景图失败，使用默认底图", error);
   }
 }
 

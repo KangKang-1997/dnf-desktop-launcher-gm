@@ -39,7 +39,6 @@ namespace {
 constexpr wchar_t kWindowClassName[] = L"DNFWebView2LauncherWindow";
 constexpr wchar_t kWindowTitle[] = L"地下城与勇士";
 constexpr wchar_t kClientPVFMismatchError[] = L"CLIENT_PVF_MISMATCH";
-constexpr wchar_t kVirtualHostName[] = L"dnf-launcher.local";
 constexpr wchar_t kRapidFireConfigFileName[] = L"rapid-fire.json";
 constexpr unsigned long long kRapidFireMinIntervalMs = 1;
 constexpr unsigned long long kRapidFireMaxIntervalMs = 10000;
@@ -145,48 +144,6 @@ std::wstring HResultText(HRESULT result) {
     return buffer;
 }
 
-std::optional<fs::path> FrontendIndexPath() {
-    const fs::path exeDir = ExeDirectory();
-    const std::vector<fs::path> candidates = {
-        exeDir / L"web" / L"index.html",
-        exeDir / L"dist" / L"index.html",
-        fs::current_path() / L"desktop_launcher" / L"dist" / L"index.html",
-        fs::current_path() / L"dist" / L"index.html",
-    };
-    for (const auto& candidate : candidates) {
-        if (fs::is_regular_file(candidate)) return candidate;
-    }
-    return std::nullopt;
-}
-
-std::wstring FileUrl(const fs::path& path) {
-    std::wstring input = fs::absolute(path).wstring();
-    DWORD size = 4096;
-    std::wstring output(size, L'\0');
-    if (FAILED(UrlCreateFromPathW(input.c_str(), output.data(), &size, 0))) {
-        return L"";
-    }
-    output.resize(size);
-    return output;
-}
-
-std::wstring FrontendVirtualUrl(const fs::path& indexPath) {
-    if (!g_webview) return FileUrl(indexPath);
-    ComPtr<ICoreWebView2_3> webview3;
-    if (FAILED(g_webview.As(&webview3)) || !webview3) {
-        LogLine(L"ICoreWebView2_3 is not available, fallback to file url");
-        return FileUrl(indexPath);
-    }
-    const fs::path root = fs::absolute(indexPath).parent_path();
-    HRESULT result = webview3->SetVirtualHostNameToFolderMapping(
-        kVirtualHostName,
-        root.wstring().c_str(),
-        COREWEBVIEW2_HOST_RESOURCE_ACCESS_KIND_ALLOW);
-    LogLine(L"SetVirtualHostNameToFolderMapping result=" + HResultText(result) + L" root=" + root.wstring());
-    if (FAILED(result)) return FileUrl(indexPath);
-    return L"http://" + std::wstring(kVirtualHostName) + L"/index.html";
-}
-
 std::wstring JsonEscape(const std::wstring& value) {
     std::wstring result;
     result.reserve(value.size() + 8);
@@ -215,6 +172,24 @@ std::wstring JsonEscape(const std::wstring& value) {
 
 std::wstring JsonString(const std::wstring& value) {
     return L"\"" + JsonEscape(value) + L"\"";
+}
+
+std::vector<unsigned char> ResourceBytes(int resourceId) {
+    HRSRC resource = FindResourceW(nullptr, MAKEINTRESOURCEW(resourceId), RT_RCDATA);
+    if (!resource) return {};
+    HGLOBAL loaded = LoadResource(nullptr, resource);
+    if (!loaded) throw std::runtime_error("加载内置资源失败");
+    DWORD size = SizeofResource(nullptr, resource);
+    const void* data = LockResource(loaded);
+    if (!data || size == 0) throw std::runtime_error("读取内置资源失败");
+    const auto* begin = static_cast<const unsigned char*>(data);
+    return std::vector<unsigned char>(begin, begin + size);
+}
+
+std::wstring EmbeddedFrontendHtml() {
+    std::vector<unsigned char> bytes = ResourceBytes(IDR_FRONTEND_HTML);
+    if (bytes.empty()) return L"";
+    return Utf8ToWide(std::string(reinterpret_cast<const char*>(bytes.data()), bytes.size()));
 }
 
 std::optional<std::wstring> ExtractJsonString(const std::wstring& json, const std::wstring& key) {
@@ -296,27 +271,9 @@ std::vector<unsigned char> ReadFileBytes(const fs::path& path, size_t maxBytes =
 }
 
 std::wstring LauncherBackground() {
-    const fs::path directory = fs::path(ExeDirectory()) / L"start" / L"backgrounds";
-    if (!fs::is_directory(directory)) return L"null";
-    std::vector<fs::path> candidates;
-    for (const auto& entry : fs::directory_iterator(directory)) {
-        if (!entry.is_regular_file()) continue;
-        std::wstring ext = entry.path().extension().wstring();
-        std::transform(ext.begin(), ext.end(), ext.begin(), towlower);
-        if (ext == L".jpg" || ext == L".jpeg" || ext == L".png" || ext == L".webp") {
-            candidates.push_back(entry.path());
-        }
-    }
-    if (candidates.empty()) return L"null";
-    std::sort(candidates.begin(), candidates.end());
-    auto seed = static_cast<unsigned long long>(std::chrono::steady_clock::now().time_since_epoch().count());
-    const fs::path chosen = candidates[seed % candidates.size()];
-    std::vector<unsigned char> bytes = ReadFileBytes(chosen, 20 * 1024 * 1024);
+    std::vector<unsigned char> bytes = ResourceBytes(IDR_DEFAULT_BACKGROUND);
     if (bytes.empty()) return L"null";
-    std::wstring ext = chosen.extension().wstring();
-    std::transform(ext.begin(), ext.end(), ext.begin(), towlower);
-    std::string mime = ext == L".png" ? "image/png" : ext == L".webp" ? "image/webp" : "image/jpeg";
-    std::string dataUrl = "data:" + mime + ";base64," + Base64Encode(bytes);
+    std::string dataUrl = "data:image/jpeg;base64," + Base64Encode(bytes);
     return JsonString(Utf8ToWide(dataUrl));
 }
 
@@ -546,13 +503,8 @@ fs::path RapidFireConfigPath() {
 }
 
 std::optional<fs::path> ExtractResourceFile(int resourceId, const fs::path& relativePath) {
-    HRSRC resource = FindResourceW(nullptr, MAKEINTRESOURCEW(resourceId), RT_RCDATA);
-    if (!resource) return std::nullopt;
-    HGLOBAL loaded = LoadResource(nullptr, resource);
-    if (!loaded) throw std::runtime_error("加载内置资源失败");
-    DWORD size = SizeofResource(nullptr, resource);
-    const void* data = LockResource(loaded);
-    if (!data || size == 0) throw std::runtime_error("读取内置资源失败");
+    std::vector<unsigned char> bytes = ResourceBytes(resourceId);
+    if (bytes.empty()) return std::nullopt;
 
     fs::path output = LauncherDataDirectory() / relativePath;
     std::error_code error;
@@ -561,14 +513,14 @@ std::optional<fs::path> ExtractResourceFile(int resourceId, const fs::path& rela
 
     if (fs::is_regular_file(output, error)) {
         error.clear();
-        if (fs::file_size(output, error) == static_cast<std::uintmax_t>(size) && !error) {
+        if (fs::file_size(output, error) == static_cast<std::uintmax_t>(bytes.size()) && !error) {
             return output;
         }
     }
 
     std::ofstream file(output, std::ios::binary | std::ios::trunc);
     if (!file) throw std::runtime_error("写入内置资源失败");
-    file.write(static_cast<const char*>(data), size);
+    file.write(reinterpret_cast<const char*>(bytes.data()), static_cast<std::streamsize>(bytes.size()));
     if (!file) throw std::runtime_error("写入内置资源失败");
     return output;
 }
@@ -1257,26 +1209,24 @@ void InitializeWebView() {
                                     }).Get(),
                                 &token);
 
-                            auto index = FrontendIndexPath();
-                            if (!index) {
-                                LogLine(L"frontend index not found");
-                                MessageBoxW(g_mainWindow, L"未找到前端文件 web/index.html", kWindowTitle, MB_ICONERROR);
+                            std::wstring frontendHtml = EmbeddedFrontendHtml();
+                            if (frontendHtml.empty()) {
+                                LogLine(L"embedded frontend not found");
+                                MessageBoxW(g_mainWindow, L"内置前端资源缺失", kWindowTitle, MB_ICONERROR);
                                 return S_OK;
                             }
-                            std::wstring url = FrontendVirtualUrl(*index);
-                            LogLine(L"frontend index: " + index->wstring());
-                            LogLine(L"frontend url: " + url);
+                            LogLine(L"frontend: embedded resource");
                             g_webview->AddScriptToExecuteOnDocumentCreated(
                                 NativeBridgeScript(),
                                 Callback<ICoreWebView2AddScriptToExecuteOnDocumentCreatedCompletedHandler>(
-                                    [url](HRESULT scriptResult, LPCWSTR) -> HRESULT {
+                                    [frontendHtml](HRESULT scriptResult, LPCWSTR) -> HRESULT {
                                         LogLine(L"AddScriptToExecuteOnDocumentCreated result=" + HResultText(scriptResult));
                                         if (FAILED(scriptResult)) {
                                             MessageBoxW(g_mainWindow, L"初始化本机桥接失败", kWindowTitle, MB_ICONERROR);
                                             return S_OK;
                                         }
-                                        g_webview->Navigate(url.c_str());
-                                        LogLine(L"Navigate called");
+                                        g_webview->NavigateToString(frontendHtml.c_str());
+                                        LogLine(L"NavigateToString called");
                                         ShowWindow(g_mainWindow, SW_SHOW);
                                         SetWindowPos(g_mainWindow, nullptr, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
                                         ResizeWebView();

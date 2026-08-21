@@ -4,20 +4,15 @@ This is the Windows desktop shell for the DNF Taiwan launcher.
 
 Current scope:
 
-- Loads the frontend from `web/index.html` next to the EXE.
+- Loads the frontend embedded in the EXE.
 - Injects `window.dnfNative` for the frontend bridge.
-- Implements window commands, saved login storage, local background loading, URL opening, DNF.exe launch/stop/status, and Script.pvf MD5 verification.
+- Implements window commands, saved login storage, embedded default background loading, URL opening, DNF.exe launch/stop/status, and Script.pvf MD5 verification.
 - Implements rapid-fire commands through the Interception runtime embedded in the EXE.
 
 Expected runtime layout:
 
 ```text
 launcher.exe
-web/
-  index.html
-  assets/
-start/
-  backgrounds/
 DNF.exe
 Script.pvf
 ```
@@ -47,4 +42,4 @@ For C++ only:
 powershell -NoProfile -ExecutionPolicy Bypass -File .\build-cpp-launcher.ps1 -SkipFrontend
 ```
 
-The build script copies `desktop_launcher/dist` to the EXE directory as `web` when the frontend build is not skipped. `cpp_launcher/assets/interception` is compiled into the EXE as resources; at runtime those files are extracted to `%LOCALAPPDATA%\DNFLauncher\Interception` only when the rapid-fire feature needs them.
+The build script embeds `desktop_launcher/dist` and `desktop_launcher/public/assets/background.jpg` into the EXE. `cpp_launcher/assets/interception` is also compiled into the EXE as resources; at runtime those files are extracted to `%LOCALAPPDATA%\DNFLauncher\Interception` only when the rapid-fire feature needs them.

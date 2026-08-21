@@ -12,7 +12,6 @@
 go_server/                 Go 服务端源码
 desktop_launcher/          Web 前端源码
 cpp_launcher/              C++ WebView2 桌面壳
-docs/                      架构说明
 build-cpp-launcher.ps1     Windows 桌面端构建脚本
 ```
 
@@ -20,11 +19,12 @@ build-cpp-launcher.ps1     Windows 桌面端构建脚本
 
 ```text
 cpp_launcher/assets/app.ico
+desktop_launcher/public/assets/background.jpg
 cpp_launcher/assets/interception/install-interception.exe
 cpp_launcher/assets/interception/x64/interception.dll
 ```
 
-Interception 安装器和 DLL 会编进桌面端 EXE。用户环境缺失驱动时，可在“按键连发”页面点击“安装驱动”，程序会释放内置安装器并请求管理员权限执行。驱动安装后通常需要重启 Windows。
+桌面端 EXE 会内置前端页面、默认背景图、Interception 安装器和 DLL。用户环境缺失驱动时，可在“按键连发”页面点击“安装驱动”，程序会释放内置安装器并请求管理员权限执行。驱动安装后通常需要重启 Windows。
 
 ## 服务端
 
@@ -82,8 +82,10 @@ go build -o .\dist\dnf-server-linux-amd64 .\cmd\dnf-server
 海报文件从服务端二进制同目录读取：
 
 ```text
-data/posters/
+posters/
 ```
+
+默认公告仍保留 `/api/posters/sample-*` 引用，发布包不提供默认图片文件；需要展示图片时，由维护人员在 `posters/` 中放入匹配文件或在后台改成实际海报地址。
 
 ## 桌面端
 
@@ -91,7 +93,6 @@ data/posters/
 
 ```text
 cpp_launcher/build-ninja/dnf-webview2-launcher.exe
-cpp_launcher/build-ninja/web/
 ```
 
 构建依赖：
@@ -122,8 +123,8 @@ $env:DNF_LAUNCHER_API_BASE="http://127.0.0.1:8000"
 - 安装或检查前端 npm 依赖
 - 使用 `DNF_LAUNCHER_API_BASE` 写入前端 API 地址
 - 构建 Vite 前端
+- 将前端页面和默认背景图编译进 C++ 资源
 - 构建 C++ WebView2 EXE
-- 将前端 `dist` 复制为 EXE 同目录的 `web`
 
 ## 客户端部署布局
 
@@ -131,11 +132,6 @@ $env:DNF_LAUNCHER_API_BASE="http://127.0.0.1:8000"
 
 ```text
 dnf-webview2-launcher.exe
-web/
-  index.html
-  assets/
-start/
-  backgrounds/
 DNF.exe
 Script.pvf
 ```
@@ -143,7 +139,7 @@ Script.pvf
 说明：
 
 - `DNF.exe` 和 `Script.pvf` 与登录器 EXE 同目录。
-- `start/backgrounds/` 可放置登录器背景图。
+- 登录器前端和默认背景图已编译进 EXE，客户端不需要 `web/` 或背景图目录。
 - 按键连发配置保存到 `%LOCALAPPDATA%\DNFLauncher\rapid-fire.json`。
 - 内置 Interception 文件按需释放到 `%LOCALAPPDATA%\DNFLauncher\Interception`。
 
